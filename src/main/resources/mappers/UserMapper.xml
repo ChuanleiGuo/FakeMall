@@ -153,8 +153,13 @@
   </update>
 
   <select id="checkUsername" resultType="int" parameterType="string">
-    select count(1) from fakemall_user
+    select count(*) from fakemall_user
     where username = #{username}
+  </select>
+
+  <select id="checkEmail" resultType="int" parameterType="string">
+    select count(*) from fakemall_user
+    where email = #{email}
   </select>
 
   <select id="selectLogin" resultMap="BaseResultMap" parameterType="map">
@@ -162,5 +167,20 @@
     <include refid="Base_Column_List"/>
     from fakemall_user
     where username = #{username} and password = #{password}
+  </select>
+
+  <select id="selectQestionByUsername" resultType="string" parameterType="string">
+    select question
+    from fakemall_user
+    where username = #{username}
+  </select>
+
+  <select id="checkAnswer" resultType="int" parameterType="map">
+    SELECT
+    count(*)
+    from mmall_user
+    where username=#{username}
+    and question = #{question}
+    and answer = #{answer}
   </select>
 </mapper>
