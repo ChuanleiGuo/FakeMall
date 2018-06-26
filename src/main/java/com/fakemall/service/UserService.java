@@ -11,7 +11,17 @@ public interface UserService {
 
     ServerResponse<String> checkValid(String str, String type);
 
-    ServerResponse selectQuestion(String username);
+    ServerResponse<String> selectQuestion(String username);
 
     ServerResponse<String> checkAnswer(String username, String question, String answer);
+
+    ServerResponse<String> forgetResetPassword(String username, String newPassword, String forgetToken);
+
+    ServerResponse<String> resetPassword(User user, String oldPassword, String newPassword);
+
+    ServerResponse<String> updateInformation(User user);
+
+    ServerResponse<String> getInfomation(Integer userId);
+
+    ServerResponse<String> checkAdminRole(User user);
 }

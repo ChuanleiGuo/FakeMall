@@ -97,13 +97,39 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ServerResponse<String> checkAnswer(String username, String question, String answer) {
-        int resultCount = userMapper.checkAnswer(username,question,answer);
-        if(resultCount > 0){
-            //说明问题及问题答案是这个用户的,并且是正确的
+        int resultCount = userMapper.checkAnswer(username, question, answer);
+        if(resultCount > 0) {
             String forgetToken = UUID.randomUUID().toString();
-            TokenCache.setKey(TokenCache.TOKEN_PREFIX+username,forgetToken);
+            TokenCache.setKey(TokenCache.TOKEN_PREFIX + username, forgetToken);
             return ServerResponse.createBySuccess(forgetToken);
         }
-        return ServerResponse.createByErrorMessage("问题的答案错误");
+        return ServerResponse.createByErrorMessage("wrong answer");
+    }
+
+    @Override
+    public ServerResponse<String> forgetResetPassword(String username, String newPassword, String forgetToekn) {
+        if (StringUtils.isBlank(forgetToekn)) {
+            return ServerResponse.createByErrorMessage("need token");
+        }
+        ServerResponse<String> validResponse = checkValid(username, Const.USERNAME);
+        if (validResponse.isSuccess()) {
+            return ServerResponse.createByErrorMessage("user does not exist");
+        }
+        String token = TokenCache.getKey(TokenCache.TOKEN_PREFIX + username);
+        if (StringUtils.isBlank(token)) {
+            return ServerResponse.createByErrorMessage("token expired");
+        }
+
+        if (StringUtils.equals(forgetToekn, token)) {
+            String md5Password = MD5Util.MD5EncodeUtf8(newPassword);
+            int rowCount = userMapper.updatePasswordByUsername(username, md5Password);
+
+            if (rowCount > 0) {
+                return ServerResponse.createBySuccessMessage("update password success");
+            }
+        } else {
+            return ServerResponse.createByErrorMessage("invalid token");
+        }
+        return ServerResponse.createByErrorMessage("update password failed");
     }
 }
