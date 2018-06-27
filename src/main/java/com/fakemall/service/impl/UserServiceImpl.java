@@ -132,4 +132,40 @@ public class UserServiceImpl implements UserService {
         }
         return ServerResponse.createByErrorMessage("update password failed");
     }
+
+    @Override
+    public ServerResponse<String> resetPassword(User user, String oldPassword, String newPassword) {
+        int resuleCount = userMapper.checkPassword(user.getId(), MD5Util.MD5EncodeUtf8(oldPassword));
+        if (resuleCount == 0) {
+            return ServerResponse.createByErrorMessage("wrong password");
+        }
+
+        user.setPassword(MD5Util.MD5EncodeUtf8(newPassword));
+        int updateCount = userMapper.updateByPrimaryKeySelective(user);
+        if (updateCount > 0) {
+            return ServerResponse.createBySuccessMessage("update password success");
+        }
+        return ServerResponse.createByErrorMessage("update password failed");
+    }
+
+    @Override
+    public ServerResponse<User> updateInformation(User user) {
+        int resultCount = userMapper.checkEmailByUserId(user.getId(), user.getEmail());
+        if (resultCount > 0 ) {
+            return ServerResponse.createByErrorMessage("email exists");
+        }
+
+        User updateUser = new User();
+        updateUser.setId(user.getId());
+        updateUser.setEmail(user.getEmail());
+        updateUser.setPhone(user.getPhone());
+        updateUser.setQuestion(user.getQuestion());
+        updateUser.setAnswer(user.getAnswer());
+
+        int updateCount = userMapper.updateByPrimaryKeySelective(updateUser);
+        if (updateCount > 0) {
+            return ServerResponse.createBySuccess("update user infomation success", updateUser);
+        }
+        return ServerResponse.createByErrorMessage("update user information failed");
+    }
 }
