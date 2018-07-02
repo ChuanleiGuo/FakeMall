@@ -1,6 +1,7 @@
 package com.fakemall.controller.api;
 
 import com.fakemall.common.Const;
+import com.fakemall.common.ResponseCode;
 import com.fakemall.common.ServerResponse;
 import com.fakemall.model.User;
 import com.fakemall.service.UserService;
@@ -66,5 +67,48 @@ public class UserController {
     @ResponseBody
     public ServerResponse<String> forgetCheckAnswer(String username,String question,String answer){
         return userService.checkAnswer(username,question,answer);
+    }
+
+    @RequestMapping(value = "forget_reset_password",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<String> forgetRestPassword(String username, String newPassword, String forgetToken) {
+        return userService.forgetResetPassword(username, newPassword, forgetToken);
+    }
+
+    @RequestMapping(value = "reset_password",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<String> resetPassword(HttpSession session, String oldPassword, String newPassword) {
+        User user = (User)session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ServerResponse.createByErrorMessage("user has not loged in");
+        }
+        return userService.resetPassword(user, oldPassword, newPassword);
+    }
+
+    @RequestMapping(value = "update_information",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<User> updateInformation(HttpSession session, User user) {
+        User currentUser = (User)session.getAttribute(Const.CURRENT_USER);
+        if (currentUser == null) {
+            return ServerResponse.createByErrorMessage("user has not loged in");
+        }
+        user.setId(currentUser.getId());
+        user.setUsername(currentUser.getUsername());
+        ServerResponse<User> response = userService.updateInformation(user);
+        if (response.isSuccess()) {
+            response.getData().setUsername(currentUser.getUsername());
+            session.setAttribute(Const.CURRENT_USER, response.getData());
+        }
+        return response;
+    }
+
+    @RequestMapping(value = "get_information",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<User> getInformation(HttpSession session) {
+        User currentUser = (User)session.getAttribute(Const.CURRENT_USER);
+        if (currentUser == null) {
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), "need login");
+        }
+        return userService.getInformation(currentUser.getId());
     }
 }
