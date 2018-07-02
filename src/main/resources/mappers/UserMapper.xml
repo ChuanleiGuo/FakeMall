@@ -184,7 +184,7 @@
     and answer = #{answer}
   </select>
 
-  <update id="updatePasswordByUsername" resultType="int", parameterType="map">
+  <update id="updatePasswordByUsername" parameterType="map">
     update fakemall_user
     set password = #{password}, update_time = now()
     where username = #{username}
