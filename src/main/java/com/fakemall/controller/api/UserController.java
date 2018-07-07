@@ -37,7 +37,7 @@ public class UserController {
         return response;
     }
 
-    @RequestMapping(value = "logout", method = RequestMethod.GET)
+    @RequestMapping(value = "logout", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<String> logout(HttpSession session) {
         session.removeAttribute(Const.CURRENT_USER);
@@ -56,26 +56,26 @@ public class UserController {
         return userService.checkValid(str, type);
     }
 
-    @RequestMapping(value = "forget_get_question",method = RequestMethod.POST)
+    @RequestMapping(value = "forget_get_question", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<String> forgetGetQuestion(String username){
         return userService.selectQuestion(username);
     }
 
 
-    @RequestMapping(value = "forget_check_answer",method = RequestMethod.POST)
+    @RequestMapping(value = "forget_check_answer", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<String> forgetCheckAnswer(String username,String question,String answer){
-        return userService.checkAnswer(username,question,answer);
+    public ServerResponse<String> forgetCheckAnswer(String username, String question, String answer){
+        return userService.checkAnswer(username, question, answer);
     }
 
-    @RequestMapping(value = "forget_reset_password",method = RequestMethod.POST)
+    @RequestMapping(value = "forget_reset_password", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<String> forgetRestPassword(String username, String newPassword, String forgetToken) {
         return userService.forgetResetPassword(username, newPassword, forgetToken);
     }
 
-    @RequestMapping(value = "reset_password",method = RequestMethod.POST)
+    @RequestMapping(value = "reset_password", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<String> resetPassword(HttpSession session, String oldPassword, String newPassword) {
         User user = (User)session.getAttribute(Const.CURRENT_USER);
@@ -85,7 +85,7 @@ public class UserController {
         return userService.resetPassword(user, oldPassword, newPassword);
     }
 
-    @RequestMapping(value = "update_information",method = RequestMethod.POST)
+    @RequestMapping(value = "update_information", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<User> updateInformation(HttpSession session, User user) {
         User currentUser = (User)session.getAttribute(Const.CURRENT_USER);
@@ -102,7 +102,7 @@ public class UserController {
         return response;
     }
 
-    @RequestMapping(value = "get_information",method = RequestMethod.POST)
+    @RequestMapping(value = "get_information", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<User> getInformation(HttpSession session) {
         User currentUser = (User)session.getAttribute(Const.CURRENT_USER);

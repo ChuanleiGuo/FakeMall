@@ -178,8 +178,8 @@
   <select id="checkAnswer" resultType="int" parameterType="map">
     select
     count(*)
-    from mmall_user
-    where username=#{username}
+    from fakemall_user
+    where username = #{username}
     and question = #{question}
     and answer = #{answer}
   </select>
